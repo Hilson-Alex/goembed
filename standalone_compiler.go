@@ -9,13 +9,13 @@ import (
 	"path/filepath"
 )
 
-//go:embed internal/golang/bin/*
-//go:embed internal/golang/pkg/*
-//go:embed internal/golang/src/*
+//go:embed internal/vendor/golang/bin/*
+//go:embed internal/vendor/golang/pkg/*
+//go:embed internal/vendor/golang/src/*
 var embedCompiler embed.FS
 
 const allowsCache = true
-const rootFolder = "internal/golang"
+const rootFolder = "internal/vendor/golang"
 const cacheFolder = "./gocmp"
 
 func isCached() bool {
