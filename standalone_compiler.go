@@ -9,9 +9,9 @@ import (
 	"path/filepath"
 )
 
-//go:embed internal/vendor/golang/bin/*
-//go:embed internal/vendor/golang/pkg/*
-//go:embed internal/vendor/golang/src/*
+//go:embed vendor/golang/bin/*
+//go:embed vendor/golang/pkg/*
+//go:embed vendor/golang/src/*
 var embedCompiler embed.FS
 
 const allowsCache = true
