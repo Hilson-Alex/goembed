@@ -6,6 +6,8 @@ import "errors"
 
 const allowsCache = false
 
+var CacheRoot = ""
+
 func isCached() bool {
 	return false
 }

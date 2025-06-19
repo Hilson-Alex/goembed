@@ -18,3 +18,16 @@ func TestEmbed(t *testing.T) {
 		}
 	}
 }
+
+func TestCache(t *testing.T) {
+	createCache()
+	if !isCached() {
+		t.Error("Cache not found!")
+		t.FailNow()
+	}
+	removeCache()
+	if isCached() {
+		t.Error("Cache should have been removed!")
+		t.FailNow()
+	}
+}

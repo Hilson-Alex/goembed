@@ -15,11 +15,17 @@ import (
 var embedCompiler embed.FS
 
 const allowsCache = true
-const rootFolder = "internal/vendor/golang"
-const cacheFolder = "./gocmp"
+const rootFolder = "internal/golang"
+const cacheFolder = "/gocmp"
+
+var CacheRoot = "."
+
+func getCache() string {
+	return filepath.Join(CacheRoot, cacheFolder)
+}
 
 func isCached() bool {
-	if _, err := os.Stat(cacheFolder); os.IsNotExist(err) {
+	if _, err := os.Stat(getCache()); os.IsNotExist(err) {
 		return false
 	}
 	return true
@@ -34,11 +40,12 @@ func withEmbed(noCache bool, callback func(string) error) error {
 			defer removeCache()
 		}
 	}
-	return callback(filepath.Clean(cacheFolder))
+	return callback(filepath.Clean(getCache()))
 }
 
 func createCache() error {
-	os.Mkdir(cacheFolder, os.ModePerm)
+	var wkdir = getCache()
+	os.Mkdir(wkdir, os.ModePerm)
 	return fs.WalkDir(embedCompiler, rootFolder, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -48,7 +55,7 @@ func createCache() error {
 			return err
 		}
 
-		destPath := filepath.Join(cacheFolder, relPath)
+		destPath := filepath.Join(wkdir, relPath)
 
 		if d.IsDir() {
 			return os.MkdirAll(destPath, os.ModePerm)
@@ -64,5 +71,5 @@ func createCache() error {
 }
 
 func removeCache() {
-	os.RemoveAll(cacheFolder)
+	os.RemoveAll(getCache())
 }
