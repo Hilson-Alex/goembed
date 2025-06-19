@@ -1,3 +1,5 @@
+//go:build !adjoining_go_compiler
+
 package compiler
 
 import (
