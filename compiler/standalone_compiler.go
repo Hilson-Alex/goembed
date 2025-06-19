@@ -40,7 +40,7 @@ func withEmbed(noCache bool, callback func(string) error) error {
 			defer removeCache()
 		}
 	}
-	return callback(filepath.Clean(getCache()))
+	return callback(getCache())
 }
 
 func createCache() error {
