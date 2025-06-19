@@ -1,4 +1,4 @@
-package goembed
+package compiler
 
 import (
 	"io"

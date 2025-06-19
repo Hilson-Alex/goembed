@@ -1,6 +1,6 @@
 //go:build adjoining_go_compiler
 
-package goembed
+package compiler
 
 import "errors"
 

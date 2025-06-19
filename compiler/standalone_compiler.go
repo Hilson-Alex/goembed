@@ -1,6 +1,6 @@
 //go:build !adjoining_go_compiler
 
-package goembed
+package compiler
 
 import (
 	"embed"
@@ -9,9 +9,9 @@ import (
 	"path/filepath"
 )
 
-//go:embed vendor/golang/bin/*
-//go:embed vendor/golang/pkg/*
-//go:embed vendor/golang/src/*
+//go:embed internal/golang/bin/*
+//go:embed internal/golang/pkg/*
+//go:embed internal/golang/src/*
 var embedCompiler embed.FS
 
 const allowsCache = true

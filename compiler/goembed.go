@@ -12,7 +12,7 @@
 // (e.g. -tags=adjoining_go_compiler) when building your application and the embed compiler
 // will be left out, at the cost of throwing an error if the computer doesn't have go installed.
 // This can reduce the binary size, but will make the code dependent of the system environment.
-package goembed
+package compiler
 
 import (
 	"io"
