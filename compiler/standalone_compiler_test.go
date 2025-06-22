@@ -7,17 +7,9 @@ import (
 )
 
 func TestEmbed(t *testing.T) {
-	fs, _ := embedCompiler.ReadDir(rootFolder)
-	var folders = []string{"bin", "pkg", "src"}
-	if len(fs) == 0 {
-		t.Error("No files found")
+	if len(embedCompiler) == 0 {
+		t.Error("No file found")
 		t.FailNow()
-	}
-	for index, file := range fs {
-		if file.Name() != folders[index] {
-			t.Errorf("Expecting %q, but found %q instead!", folders[index], file.Name())
-			t.FailNow()
-		}
 	}
 }
 

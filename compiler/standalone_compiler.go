@@ -1,21 +1,24 @@
 //go:build !adjoining_go_compiler
 
+//go:generate 7z a -r .\internal\golang\golang.zip .\internal\golang\bin\ .\internal\golang\pkg\ .\internal\golang\src\
+
 package compiler
 
 import (
-	"embed"
-	"io/fs"
+	"archive/zip"
+	"bytes"
+	_ "embed"
+	"io"
 	"os"
 	"path/filepath"
 )
 
-//go:embed internal/golang/bin/*
-//go:embed internal/golang/pkg/*
-//go:embed internal/golang/src/*
-var embedCompiler embed.FS
+//go:embed internal/golang/golang.zip
+var embedCompiler []byte
 
 const allowsCache = true
-const rootFolder = "internal/golang"
+
+// const rootFolder = "internal/golang"
 const cacheFolder = "/gocmp"
 
 var CacheRoot = "."
@@ -44,30 +47,45 @@ func withEmbed(noCache bool, callback func(string) error) error {
 }
 
 func createCache() error {
+	var bReader = bytes.NewReader(embedCompiler)
 	var wkdir = getCache()
-	os.Mkdir(wkdir, os.ModePerm)
-	return fs.WalkDir(embedCompiler, rootFolder, func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
+
+	r, err := zip.NewReader(bReader, bReader.Size())
+	if err != nil {
+		return err
+	}
+
+	for _, file := range r.File {
+		destPath := filepath.Join(wkdir, file.Name)
+		if file.FileInfo().IsDir() {
+			os.MkdirAll(destPath, os.ModePerm)
+			continue
+		}
+		if err := writeFile(destPath, file); err != nil {
 			return err
 		}
-		relPath, err := filepath.Rel(rootFolder, path)
-		if err != nil {
-			return err
-		}
+	}
+	return nil
+}
 
-		destPath := filepath.Join(wkdir, relPath)
+func writeFile(destPath string, file *zip.File) error {
+	archiveFile, err := file.Open()
+	defer func() { archiveFile.Close() }()
+	if err != nil {
+		return err
+	}
 
-		if d.IsDir() {
-			return os.MkdirAll(destPath, os.ModePerm)
-		}
+	if os.MkdirAll(filepath.Dir(destPath), os.ModePerm) != nil {
+		return err
+	}
+	destinationFile, err := os.OpenFile(destPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, file.Mode())
+	if err != nil {
+		return err
+	}
+	defer func() { destinationFile.Close() }()
 
-		data, err := fs.ReadFile(embedCompiler, path)
-		if err != nil {
-			return err
-		}
-
-		return os.WriteFile(destPath, data, 0o644)
-	})
+	_, err = io.Copy(destinationFile, archiveFile)
+	return err
 }
 
 func removeCache() {
