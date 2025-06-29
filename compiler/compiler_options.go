@@ -23,10 +23,11 @@ type CustomOption func(options *CompilerOptions)
 // Use BuildOptions() to get the default values
 func BuildOptions(customOptions ...CustomOption) *CompilerOptions {
 	var options = &CompilerOptions{
-		env:    props.DefaultEnv(),
-		args:   props.Empty(),
-		stdout: os.Stdout,
-		stderr: os.Stderr,
+		env:     props.DefaultEnv(),
+		args:    props.Empty(),
+		stdout:  os.Stdout,
+		stderr:  os.Stderr,
+		noCache: false,
 	}
 	for _, customize := range customOptions {
 		customize(options)

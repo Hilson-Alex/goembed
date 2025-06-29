@@ -15,9 +15,12 @@
 package compiler
 
 import (
+	"errors"
+	"fmt"
 	"io"
 	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/Hilson-Alex/goembed/props"
 )
@@ -65,7 +68,14 @@ func execute(command string, env, args []string, stdout, stderr io.Writer) error
 	cmd.Env = env
 	cmd.Stdout = stdout
 	cmd.Stderr = stderr
-	return cmd.Run()
+	if err := cmd.Run(); err != nil {
+		return errors.Join(
+			errors.New("Error on command execution"),
+			errors.New(fmt.Sprint(command, "\n  ", strings.Join(args, "\n  "))),
+			err,
+		)
+	}
+	return nil
 }
 
 func goExists() bool {

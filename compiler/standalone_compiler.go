@@ -39,9 +39,9 @@ func withEmbed(noCache bool, callback func(string) error) error {
 		if err := createCache(); err != nil {
 			return err
 		}
-		if noCache {
-			defer removeCache()
-		}
+	}
+	if noCache {
+		defer removeCache()
 	}
 	return callback(getCache())
 }

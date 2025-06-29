@@ -1,6 +1,8 @@
 package props
 
-import "os"
+import (
+	"os"
+)
 
 // This type represents a collection of key/value properties, and is
 // used for both the env properties and the command line arguments.
@@ -45,7 +47,14 @@ func (props *Properties) Append(key, value string) *Properties {
 //
 // E.g.: props.AppendAll(map[string]string{"-arg": "value", "-flag": ""})
 func (props *Properties) AppendAll(properties map[string]string) *Properties {
+	if value, ok := properties["-C"]; ok {
+		// -C must be the first flag
+		props.Append("-C", value)
+	}
 	for key, value := range properties {
+		if key == "-C" {
+			continue
+		}
 		props.Append(key, value)
 	}
 	return props
